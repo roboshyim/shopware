@@ -116,7 +116,7 @@ class PromotionAdminSearchIndexer extends AbstractAdminIndexer
     }
 
     /**
-     * @return array<string, array{id:string, text:string}>
+     * @return array<string, array{id: string, text: string, completion: list<string>, name: array<string, string>, code: mixed, active: bool, validFrom: string|null, validUntil: string|null, createdAt: string|null}|array{id: string, text: string, completion: list<string>}>
      */
     public function fetch(array $ids): array
     {

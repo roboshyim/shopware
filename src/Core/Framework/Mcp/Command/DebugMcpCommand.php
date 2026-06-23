@@ -132,7 +132,7 @@ class DebugMcpCommand extends Command
         foreach ($this->registry->getResources()->references as $resource) {
             \assert($resource instanceof ResourceDefinition);
 
-            if (($resource->name ?? $resource->uri) === $name || $resource->uri === $name) {
+            if ($resource->name === $name || $resource->uri === $name) {
                 $ref = $this->registry->getResource($resource->uri, false);
                 $this->renderResourceDetail($io, $resource, $ref->handler);
 
@@ -146,14 +146,14 @@ class DebugMcpCommand extends Command
     }
 
     /**
-     * @param array{name: string, description: ?string, group: string, dependencies: list<string>, requiredPrivileges: array{static: list<string>, entityParam: ?string, operations: list<string>}|null}|null $toolData
+     * @param array{name: string, title: ?string, description: ?string, group: string, dependencies: list<string>, requiredPrivileges: array{static: list<string>, entityParam: ?string, operations: list<string>}|null}|null $toolData
      * @param \Closure|array{0: object|string, 1: string}|string $handler
      */
     private function renderToolDetail(SymfonyStyle $io, Tool $tool, \Closure|array|string $handler, ?array $toolData): void
     {
         $rows = [];
         $properties = $tool->inputSchema['properties'] ?? [];
-        $required = \is_array($tool->inputSchema['required'] ?? null) ? $tool->inputSchema['required'] : [];
+        $required = \is_array($tool->inputSchema['required']) ? $tool->inputSchema['required'] : [];
 
         if (\is_array($properties)) {
             foreach ($properties as $paramName => $def) {
@@ -233,7 +233,7 @@ class DebugMcpCommand extends Command
             $meta[] = ['MIME type' => $resource->mimeType];
         }
 
-        $this->renderCapabilityDetail($io, $resource->name ?? $resource->uri, $meta, $resource->description);
+        $this->renderCapabilityDetail($io, $resource->name, $meta, $resource->description);
     }
 
     /**
@@ -357,7 +357,7 @@ class DebugMcpCommand extends Command
             \assert($resource instanceof ResourceDefinition);
 
             $ref = $this->registry->getResource($resource->uri, false);
-            $rows[] = [$resource->name ?? $resource->uri, $this->describeHandler($ref->handler)];
+            $rows[] = [$resource->name, $this->describeHandler($ref->handler)];
         }
 
         $this->renderTable($io, $rows);

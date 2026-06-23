@@ -112,6 +112,9 @@ jobs:
           restore-keys: |
             phpstan-result-cache-
 
+      - name: PHPStan diagnose
+        run: vendor/bin/phpstan diagnose
+
       - name: PHPStan
         run: composer run phpstan -- --error-format=table --no-progress
 

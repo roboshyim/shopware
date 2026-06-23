@@ -77,7 +77,7 @@ class CmsSlotsDataResolverTest extends TestCase
         $resolver = $this->getContainer()->get(CmsSlotsDataResolver::class);
         $result = $resolver->resolve($slots, $resolverContext);
 
-        $productSliderData = $result->first()?->getData() ?? null;
+        $productSliderData = $result->first()?->getData();
         static::assertInstanceOf(ProductSliderStruct::class, $productSliderData);
 
         $product = $productSliderData->getProducts()?->get($this->ids->get('product-1'));

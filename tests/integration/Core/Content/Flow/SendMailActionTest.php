@@ -99,7 +99,7 @@ class SendMailActionTest extends TestCase
     }
 
     /**
-     * @param array{type: 'customer'|'admin'|'custom'} $recipients
+     * @param array{type: 'customer'|'admin'|'custom', data?: array<string, string>} $recipients
      * @param list<string>|array{}|array{data: array<string, string>} $documentTypeIds
      */
     #[DataProvider('sendMailProvider')]
@@ -235,7 +235,7 @@ class SendMailActionTest extends TestCase
                 static::assertNotNull($email);
                 static::assertSame(
                     $mailService->data['recipients'],
-                    [$email => $order->getOrderCustomer()?->getFirstName() . ' ' . $order->getOrderCustomer()?->getLastName()]
+                    [$email => $order->getOrderCustomer()->getFirstName() . ' ' . $order->getOrderCustomer()->getLastName()]
                 );
         }
 
@@ -260,7 +260,7 @@ class SendMailActionTest extends TestCase
     }
 
     /**
-     * @return \Generator<string, array{0: array{type: 'customer'|'admin'|'custom'}, 1?: list<string>|array{}|array{data: array<string, string>}, 2?: bool}>
+     * @return \Generator<string, array{0: array{type: 'customer'|'admin'|'custom', data?: array<string, string>}, 1?: list<string>|array{}|array{data: array<string, string>}, 2?: bool}>
      */
     public static function sendMailProvider(): \Generator
     {
@@ -755,6 +755,7 @@ class SendMailActionTest extends TestCase
         $order = $this->orderRepository->search(new Criteria([$orderId]), $context)->getEntities()->first();
         static::assertInstanceOf(OrderEntity::class, $order);
 
+        /** @var list<array{id: string, technical_name: string}> $documentTypes */
         $documentTypes = $this->connection->fetchAllAssociative(
             'SELECT HEX(`id`) AS `id`, `technical_name` FROM document_type WHERE `technical_name` IN (:type1, :type2);',
             [
@@ -1201,7 +1202,7 @@ class SendMailActionTest extends TestCase
     }
 
     /**
-     * @param array<array<string, string>> $documentTypes
+     * @param list<array{id: string, technical_name: string, documentId: string, filename: string}> $documentTypes
      *
      * @return array{id: string, technical_name: string, documentId: string, filename: string}|array{}
      */
@@ -1301,9 +1302,9 @@ class TestEmailService extends MailService
 
         if ($this->mailFactory && $this->decorator) {
             $mail = $this->mailFactory->create(
-                $data['subject'],
+                $data['subject'] ?? '',
                 ['foo@example.com' => 'foobar'],
-                $data['recipients'],
+                $data['recipients'] ?? [],
                 [],
                 [],
                 $data,

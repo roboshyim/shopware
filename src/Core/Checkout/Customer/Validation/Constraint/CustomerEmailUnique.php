@@ -70,7 +70,7 @@ class CustomerEmailUnique extends Constraint
                 $options['context'] = $options['salesChannelContext']->getContext();
             }
 
-            if (!($options['context'] ?? null) instanceof Context) {
+            if (!($options['context']) instanceof Context) {
                 throw CustomerException::missingOption('context', self::class);
             }
 

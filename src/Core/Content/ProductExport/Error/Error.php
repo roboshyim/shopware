@@ -5,14 +5,12 @@ namespace Shopware\Core\Content\ProductExport\Error;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Struct\AssignArrayInterface;
 use Shopware\Core\Framework\Struct\AssignArrayTrait;
-use Shopware\Core\Framework\Struct\CreateFromTrait;
 use Shopware\Core\Framework\Struct\JsonSerializableTrait;
 
 #[Package('inventory')]
 abstract class Error extends \Exception implements \JsonSerializable, AssignArrayInterface
 {
     use AssignArrayTrait;
-    use CreateFromTrait;
     use JsonSerializableTrait;
 
     abstract public function getId(): string;

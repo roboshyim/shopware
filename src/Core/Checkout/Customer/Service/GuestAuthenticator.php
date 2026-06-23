@@ -30,7 +30,7 @@ class GuestAuthenticator
         // See ticket: https://github.com/shopware/shopware/issues/16005
         $billingAddress = $order->getBillingAddress();
         if ($billingAddress === null
-            || mb_strtolower($email) !== mb_strtolower($order->getOrderCustomer()?->getEmail() ?: '')
+            || mb_strtolower($email) !== mb_strtolower($order->getOrderCustomer()->getEmail() ?: '')
             || mb_strtoupper($zipcode) !== mb_strtoupper($billingAddress->getZipcode() ?: '')) {
             throw CustomerException::wrongGuestCredentials();
         }

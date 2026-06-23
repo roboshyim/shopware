@@ -47,7 +47,7 @@ class PaymentMethodRuleAccessibleTest extends TestCase
         $searchedRule = $this->ruleRepository->search($criteria, $defaultContext)->getEntities()->first();
         static::assertNotNull($searchedRule);
 
-        static::assertSame($ruleId ?? null, $searchedRule->getId());
+        static::assertSame($ruleId, $searchedRule->getId());
         static::assertSame(
             $rule[0]['paymentMethods'][0]['id'] ?? null,
             $searchedRule->getPaymentMethods()?->first()?->getId()

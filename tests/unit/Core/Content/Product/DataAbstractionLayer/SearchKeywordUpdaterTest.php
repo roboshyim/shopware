@@ -65,10 +65,10 @@ class SearchKeywordUpdaterTest extends TestCase
         $parent->setName('Parent product');
         $parent->setTranslated(['name' => 'Parent product']);
 
-        $productRepository = new StaticEntityRepository([
+        $productRepository = $this->createProductRepository([
             new ProductCollection([$parent]),
             new ProductCollection(),
-        ], new ProductDefinition());
+        ]);
 
         $updater = $this->createUpdater($productRepository);
 
@@ -90,7 +90,7 @@ class SearchKeywordUpdaterTest extends TestCase
         $child = $this->createProduct($childId, Uuid::randomHex());
 
         // empty searches: any call to the repository would throw
-        $productRepository = new StaticEntityRepository([], new ProductDefinition());
+        $productRepository = $this->createProductRepository();
 
         $updater = $this->createUpdater($productRepository);
 
@@ -105,7 +105,7 @@ class SearchKeywordUpdaterTest extends TestCase
 
     public function testBuildCriteriaFiltersTranslationsByLanguageChain(): void
     {
-        $productRepository = new StaticEntityRepository([], new ProductDefinition());
+        $productRepository = $this->createProductRepository();
         $updater = $this->createUpdater($productRepository);
 
         $chain = [Uuid::randomHex(), Uuid::randomHex(), Defaults::LANGUAGE_SYSTEM];
@@ -131,6 +131,16 @@ class SearchKeywordUpdaterTest extends TestCase
         static::assertArrayHasKey('parent.translations.languageId', $translationFilters);
         static::assertSame($chain, $translationFilters['translations.languageId']);
         static::assertSame($chain, $translationFilters['parent.translations.languageId']);
+    }
+
+    /**
+     * @param list<ProductCollection> $searches
+     *
+     * @return StaticEntityRepository<ProductCollection>
+     */
+    private function createProductRepository(array $searches = []): StaticEntityRepository
+    {
+        return new StaticEntityRepository($searches, new ProductDefinition());
     }
 
     /**

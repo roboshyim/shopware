@@ -59,7 +59,7 @@ class CustomerVatIdentification extends Constraint
             $this->message = $message;
         } else {
             if ($countryId === null) {
-                if (!\is_string($options['countryId'] ?? null)) {
+                if (!\is_string($options['countryId'])) {
                     throw CustomerException::missingOption('countryId', self::class);
                 }
 

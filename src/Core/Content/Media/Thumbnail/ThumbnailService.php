@@ -222,7 +222,7 @@ class ThumbnailService
     }
 
     /**
-     * @return list<array{id:string, mediaId:string, width:int, height:int}>
+     * @return list<array{id:string, mediaId:string, mediaThumbnailSizeId:string, width:int, height:int}>
      */
     private function generateAndSave(MediaEntity $media, MediaFolderConfigurationEntity $config, Context $context, ?MediaThumbnailSizeCollection $sizes): array
     {

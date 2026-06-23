@@ -147,7 +147,7 @@ class ModuleLoader
      */
     private function getModuleUrlWithQuery(AppEntity $app, array $module, Context $context): ?string
     {
-        $registeredSource = $module['source'] ?? null;
+        $registeredSource = $module['source'];
         if ($registeredSource === null) {
             return null;
         }

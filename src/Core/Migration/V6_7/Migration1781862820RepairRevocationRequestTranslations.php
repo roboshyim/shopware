@@ -521,7 +521,7 @@ SQL,
             return;
         }
 
-        $configuredPageId = $this->extractCmsPageId($configuration['configuration_value'] ?? null);
+        $configuredPageId = $this->extractCmsPageId($configuration['configuration_value']);
         if ($configuredPageId !== null && $this->cmsPageExistsInLiveVersion($connection, $configuredPageId)) {
             return;
         }

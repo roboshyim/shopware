@@ -39,12 +39,12 @@ readonly class SecureUrlValidator
     ];
 
     /**
-     * @var \Closure(string): list<array{ip?: string, ipv6?: string}>
+     * @var \Closure(string): list<array{ip?: string, ipv6?: string, ...}>
      */
     private \Closure $dnsResolver;
 
     /**
-     * @param (\Closure(string): list<array{ip?: string, ipv6?: string}>)|null $dnsResolver
+     * @param (\Closure(string): list<array{ip?: string, ipv6?: string, ...}>)|null $dnsResolver
      */
     public function __construct(?\Closure $dnsResolver = null)
     {

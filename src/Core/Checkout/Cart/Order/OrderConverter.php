@@ -163,7 +163,7 @@ class OrderConverter
             // In order to reference the primary order delivery we need to set ids. The primary order delivery is the
             // order delivery with the highest shipping costs (i.e. _not_ a shipping discount).
             /** @deprecated tag:v6.8.0 - `$isRecalculation` will be removed from condition without replacement */
-            if ((!$isRecalculation || !$cart->getBehavior()?->hasPermission(CheckoutPermissions::SKIP_PRIMARY_ORDER_IDS)) && $cart->getDeliveries()->count() > 0) {
+            if ((!$isRecalculation || !$cart->getBehavior()->hasPermission(CheckoutPermissions::SKIP_PRIMARY_ORDER_IDS)) && $cart->getDeliveries()->count() > 0) {
                 usort(
                     $data['deliveries'],
                     static function (array $deliveryA, array $deliveryB) {
@@ -205,7 +205,7 @@ class OrderConverter
             );
 
             /** @deprecated tag:v6.8.0 - `$isRecalculation` will be removed from condition without replacement */
-            if ((!$isRecalculation || !$cart->getBehavior()?->hasPermission(CheckoutPermissions::SKIP_PRIMARY_ORDER_IDS)) && $cart->getTransactions()->count() > 0) {
+            if ((!$isRecalculation || !$cart->getBehavior()->hasPermission(CheckoutPermissions::SKIP_PRIMARY_ORDER_IDS)) && $cart->getTransactions()->count() > 0) {
                 $data['transactions'][0]['id'] ??= Uuid::randomHex();
                 $data['primaryOrderTransactionId'] = $data['transactions'][0]['id'];
             }

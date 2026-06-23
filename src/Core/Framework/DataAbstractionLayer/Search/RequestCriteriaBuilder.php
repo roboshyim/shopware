@@ -273,7 +273,7 @@ class RequestCriteriaBuilder
     {
         $sortings = [];
         foreach ($sorting as $i => $sort) {
-            if (!\is_array($sort) || !\is_string($sort['field'] ?? null)) {
+            if (!\is_array($sort) || !\is_string($sort['field'])) {
                 throw DataAbstractionLayerException::invalidSortQuery('The "sort" array needs to be an associative array at least containing a field name', '/sort/' . $i);
             }
 
@@ -371,7 +371,7 @@ class RequestCriteriaBuilder
     }
 
     /**
-     * @param array{page: int, limit?: int} $payload
+     * @param array{page: int|numeric-string, limit?: int|numeric-string, ...} $payload
      */
     private function setPage(array $payload, Criteria $criteria, SearchRequestException $searchRequestException): void
     {
@@ -401,7 +401,7 @@ class RequestCriteriaBuilder
     }
 
     /**
-     * @param array{limit: int} $payload
+     * @param array{limit: int|numeric-string, ...} $payload
      */
     private function addLimit(array $payload, Criteria $criteria, SearchRequestException $searchRequestException, ?int $maxLimit): void
     {
@@ -424,7 +424,7 @@ class RequestCriteriaBuilder
             return;
         }
 
-        if ($maxLimit > 0 && $limit > $maxLimit) {
+        if ($maxLimit !== null && $maxLimit > 0 && $limit > $maxLimit) {
             $searchRequestException->add(new QueryLimitExceededException($this->maxLimit, $limit), '/limit');
 
             return;
@@ -434,7 +434,7 @@ class RequestCriteriaBuilder
     }
 
     /**
-     * @param array{filter: array<mixed>} $payload
+     * @param array{filter: array<string, array<string, mixed>>, ...} $payload
      */
     private function addFilter(EntityDefinition $definition, array $payload, Criteria $criteria, SearchRequestException $searchException): void
     {
@@ -467,7 +467,7 @@ class RequestCriteriaBuilder
     }
 
     /**
-     * @param array{post-filter: array<mixed>} $payload
+     * @param array{post-filter: array<string, array<string, mixed>>, ...} $payload
      */
     private function addPostFilter(EntityDefinition $definition, array $payload, Criteria $criteria, SearchRequestException $searchException): void
     {
@@ -508,7 +508,7 @@ class RequestCriteriaBuilder
     }
 
     /**
-     * @param array{sort: list<array{order: string, type: string, field: string}>|string} $payload
+     * @param array{sort: list<array{order: string, type: string, field: string}>|string, ...} $payload
      */
     private function addSorting(array $payload, Criteria $criteria, EntityDefinition $definition, SearchRequestException $searchException): void
     {

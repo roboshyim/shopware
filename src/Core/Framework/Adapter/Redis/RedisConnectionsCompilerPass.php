@@ -41,7 +41,7 @@ class RedisConnectionsCompilerPass implements CompilerPassInterface
 
         $connectionServices = [];
         foreach ($connections as $name => $connection) {
-            $dsn = $connection['dsn'] ?? null;
+            $dsn = $connection['dsn'];
 
             if (!\is_string($dsn)) {
                 throw AdapterException::invalidRedisConnectionDsn($name);

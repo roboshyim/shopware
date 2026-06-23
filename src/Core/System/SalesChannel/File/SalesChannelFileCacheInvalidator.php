@@ -90,6 +90,6 @@ class SalesChannelFileCacheInvalidator implements EventSubscriberInterface
             return $primaryKey;
         }
 
-        return $primaryKey['id'] ?? null;
+        return $primaryKey['id'];
     }
 }

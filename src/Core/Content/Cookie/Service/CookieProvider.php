@@ -214,7 +214,7 @@ class CookieProvider
     private function convertLegacyCookies(CookieGroupCollection $cookieGroupCollection, array $legacyCookieGroups): void
     {
         foreach ($legacyCookieGroups as $legacyCookieGroup) {
-            $snippetName = $legacyCookieGroup['snippet_name'] ?? null;
+            $snippetName = $legacyCookieGroup['snippet_name'];
             if ($snippetName === null) {
                 throw CookieException::invalidLegacyCookieGroupProvided($legacyCookieGroup);
             }
@@ -257,7 +257,7 @@ class CookieProvider
                 }
 
                 foreach ($legacyCookieGroup['entries'] as $entry) {
-                    $cookie = $entry['cookie'] ?? null;
+                    $cookie = $entry['cookie'];
                     if ($cookie === null) {
                         throw CookieException::invalidLegacyCookieEntryProvided($entry);
                     }

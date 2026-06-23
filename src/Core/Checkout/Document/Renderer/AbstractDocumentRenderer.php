@@ -99,9 +99,7 @@ abstract class AbstractDocumentRenderer
             return false;
         }
 
-        $shippingAddress = $orderDelivery->getShippingOrderAddress();
-
-        $country = $shippingAddress?->getCountry();
+        $country = $orderDelivery->getShippingOrderAddress()?->getCountry();
         if ($country === null) {
             return false;
         }
@@ -110,7 +108,7 @@ abstract class AbstractDocumentRenderer
             return true;
         }
 
-        $vatIds = $order->getOrderCustomer()?->getVatIds();
+        $vatIds = $order->getOrderCustomer()->getVatIds();
         if (!\is_array($vatIds)) {
             return false;
         }

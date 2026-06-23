@@ -282,7 +282,7 @@ class ShippingCostRouteTest extends TestCase
             'token' => $response['token'],
             'shippingMethodId' => $response['shippingMethod']['id'],
             'paymentMethodId' => $response['paymentMethod']['id'],
-            'ruleIds' => $response['ruleIds'] ?? null,
+            'ruleIds' => $response['ruleIds'],
         ];
     }
 

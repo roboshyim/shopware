@@ -6,7 +6,6 @@ use Shopware\Core\Framework\Feature;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Struct\AssignArrayInterface;
 use Shopware\Core\Framework\Struct\AssignArrayTrait;
-use Shopware\Core\Framework\Struct\CreateFromTrait;
 use Shopware\Core\Framework\Struct\JsonSerializableTrait;
 
 #[Package('checkout')]
@@ -14,9 +13,6 @@ abstract class Error extends \Exception implements \JsonSerializable, AssignArra
 {
     // allows to assign array data to this object
     use AssignArrayTrait;
-
-    // allows to create a new instance with all data of the provided object
-    use CreateFromTrait;
 
     // allows json_encode and to decode object via json serializer
     use JsonSerializableTrait;

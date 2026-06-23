@@ -68,7 +68,7 @@ class CustomerPasswordMatches extends Constraint
                 $options['salesChannelContext'] = $options['context'];
             }
 
-            if (!($options['salesChannelContext'] ?? null) instanceof SalesChannelContext) {
+            if (!($options['salesChannelContext']) instanceof SalesChannelContext) {
                 throw CustomerException::missingOption('salesChannelContext', self::class);
             }
 

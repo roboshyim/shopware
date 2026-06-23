@@ -98,7 +98,7 @@ class OrderRecalculationControllerTest extends TestCase
     }
 
     /**
-     * @param array{lineItems: array<int, array{id: string}>} $orderData
+     * @param array{lineItems: array<int, array{id: string}>, ...<string, mixed>} $orderData
      *
      * @return array<string, mixed>
      */

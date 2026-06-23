@@ -99,6 +99,7 @@ class SeoResolver extends AbstractSeoResolver
         $query->andWhere('(' . implode(' OR ', $seoPathConditions) . ')');
         $query->setTitle('seo-url::resolve');
 
+        /** @var list<array{id: string, pathInfo: string, isCanonical: string|null, salesChannelId: string|null}> $seoPaths */
         $seoPaths = $query->executeQuery()->fetchAllAssociative();
 
         usort($seoPaths, function ($a, $b) use ($normalizedQueryString) {

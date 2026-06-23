@@ -71,8 +71,8 @@ readonly class AppInfo
             $sourceConfig['revision'],
             $sourceConfig['zip-url'],
             $sourceConfig['requirements'],
-            $sourceConfig['hash-algorithm'] ?? null,
-            $sourceConfig['min-shop-supported-version'] ?? null,
+            $sourceConfig['hash-algorithm'],
+            $sourceConfig['min-shop-supported-version'],
         );
     }
 

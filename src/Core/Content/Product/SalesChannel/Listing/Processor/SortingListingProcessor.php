@@ -104,12 +104,12 @@ class SortingListingProcessor extends AbstractListingProcessor
     {
         $criteria = new Criteria();
         $criteria->setTitle('product-listing::load-sortings');
-        /** @var string[] $availableSortings */
+        /** @var array<string, mixed> $availableSortings */
         $availableSortings = RequestParamHelper::get($request, 'availableSortings');
         $availableSortingsById = [];
 
         if ($availableSortings) {
-            arsort($availableSortings, \SORT_DESC | \SORT_NUMERIC);
+            arsort($availableSortings, \SORT_NUMERIC);
             $availableSortingsFilter = array_keys($availableSortings);
 
             $availableSortingsById = array_filter($availableSortingsFilter, static fn ($filter) => Uuid::isValid($filter));
