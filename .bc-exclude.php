@@ -170,5 +170,27 @@ return [
 
         // parent method has no type. not really a break
         preg_quote('CHANGED: The return type of Shopware\Core\Framework\Migration\Command\RefreshMigrationCommand#configure() changed from void to ', '/'),
+
+        // Headless SEO URL support: the following types are internal SEO URL generation plumbing, not
+        // documented extension points. They are marked @internal to reflect their intended visibility and
+        // gained store-api/headless awareness. Plugins extend SEO URL routing via the still-public
+        // SeoUrlRouteInterface (which keeps its full method set), so none of these are a real break.
+        preg_quote('CHANGED: Shopware\Core\Content\Seo\ConfiguredSeoUrlRoute was marked "@internal"', '/'),
+        preg_quote('CHANGED: The parameter $decorated of Shopware\Core\Content\Seo\ConfiguredSeoUrlRoute#__construct() changed from Shopware\Core\Content\Seo\SeoUrlRoute\SeoUrlRouteInterface to Shopware\Core\Content\Seo\SeoUrlRoute\EntitySeoUrlRouteInterface', '/'),
+        preg_quote('ADDED: Method prepareCriteria() was added to interface Shopware\Core\Content\Seo\SeoUrlRoute\EntitySeoUrlRouteInterface', '/'),
+        preg_quote('CHANGED: Shopware\Core\Content\Seo\SeoUrlRoute\EntitySeoUrlRouteInterface was marked "@internal"', '/'),
+        preg_quote('CHANGED: Shopware\Core\Content\Seo\SeoUrlRoute\EntityRouteResolver was marked "@internal"', '/'),
+        preg_quote('ADDED: Parameter isHeadless was added to Method getRouteNameForEntityName() of class Shopware\Core\Content\Seo\SeoUrlRoute\EntityRouteResolver', '/'),
+        preg_quote('ADDED: Parameter isHeadless was added to Method generateSeoUrlPlaceholder() of class Shopware\Core\Content\Seo\SeoUrlRoute\EntityRouteResolver', '/'),
+        preg_quote('ADDED: Parameter isHeadless was added to Method generateUrl() of class Shopware\Core\Content\Seo\SeoUrlRoute\EntityRouteResolver', '/'),
+        preg_quote('CHANGED: Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension was marked "@internal"', '/'),
+        preg_quote('ADDED: Parameter context was added to Method seoUrl() of class Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension', '/'),
+        preg_quote('CHANGED: The number of required arguments for Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension#seoUrl() increased from 1 to 2', '/'),
+        preg_quote('CHANGED: The parameter $name of Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension#seoUrl() changed from string to a non-contravariant array', '/'),
+        preg_quote('CHANGED: The parameter $parameters of Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension#seoUrl() changed from array to a non-contravariant string', '/'),
+        preg_quote('CHANGED: The parameter $name of Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension#seoUrl() changed from string to array', '/'),
+        preg_quote('CHANGED: The parameter $parameters of Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension#seoUrl() changed from array to string', '/'),
+        preg_quote('CHANGED: Parameter 0 of Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension#seoUrl() changed name from name to context', '/'),
+        preg_quote('CHANGED: Parameter 1 of Shopware\Core\Framework\Adapter\Twig\Extension\SeoUrlFunctionExtension#seoUrl() changed name from parameters to name', '/'),
     ],
 ];
