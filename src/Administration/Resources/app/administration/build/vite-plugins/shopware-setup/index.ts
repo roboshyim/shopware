@@ -57,6 +57,13 @@ export default function ShopwareSetupPlugin(options: Options): Plugin {
     // the per-compilation cross-file uniqueness check the transform's componentName seam enables.
     const baseComponentFiles = new Map<string, string>();
     const virtualSourcemap = createVirtualSetupSourcemapContext(options.administrationRoot);
+    // resolveId already runs the full transform to decide whether a `.vue` file is a Shopware setup
+    // SFC (there is no cheaper signal - base setup files share the plain `.vue` extension with regular
+    // SFCs, so the parser's own verdict is the detection). Stash that result here, keyed by the real
+    // file, so the matching load() reuses it instead of transforming a second time. One-shot: load()
+    // deletes on read, and a watch-triggered reload that skips resolveId simply falls back to a fresh
+    // transform - so the cache can never serve stale output.
+    const resolvedTransforms = new Map<string, ShopwareSetupTransformResult>();
 
     async function transformFile(fileName: string): Promise<ShopwareSetupTransformResult | null> {
         const transformShopwareSetupSfc = await loadShopwareSetupTransform(options.administrationRoot);
@@ -133,6 +140,7 @@ export default function ShopwareSetupPlugin(options: Options): Plugin {
 
             const virtualFileName = virtualSourcemap.toVirtualFileName(fileName);
             virtualSourcemap.rememberOriginalFile(virtualFileName, fileName);
+            resolvedTransforms.set(fileName, result);
 
             return virtualFileName;
         },
@@ -149,7 +157,15 @@ export default function ShopwareSetupPlugin(options: Options): Plugin {
             }
 
             const originalFileName = virtualSourcemap.getOriginalFileName(fileName);
-            const result = await transformFile(originalFileName);
+
+            // The virtual module's content is derived from the real `.vue` file, which Rollup never
+            // sees as a module of its own. Register it as a watched dependency so an edit invalidates
+            // this virtual module in dev/watch mode.
+            this.addWatchFile(originalFileName);
+
+            const cached = resolvedTransforms.get(originalFileName);
+            resolvedTransforms.delete(originalFileName);
+            const result = cached ?? (await transformFile(originalFileName));
 
             if (!result) {
                 return null;

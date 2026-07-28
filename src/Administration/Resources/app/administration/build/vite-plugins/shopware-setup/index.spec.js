@@ -42,11 +42,15 @@ async function resolveAndLoadVueFile(plugin, vueFile) {
         `./${path.basename(vueFile)}`,
         path.join(path.dirname(vueFile), 'entry.js'),
     );
-    const loaded = await plugin.load(resolvedId);
+    const loadContext = {
+        addWatchFile: jest.fn(),
+    };
+    const loaded = await plugin.load.call(loadContext, resolvedId);
 
     return {
         loaded,
         resolvedId,
+        loadContext,
     };
 }
 
@@ -80,7 +84,7 @@ swDefinePublic({ count });
 </script>`;
         const vueFile = await createVueFile(source, 'sw-my-component.vue');
 
-        const { loaded, resolvedId } = await resolveAndLoadVueFile(plugin, vueFile);
+        const { loaded, resolvedId, loadContext } = await resolveAndLoadVueFile(plugin, vueFile);
 
         expect(resolvedId).toBe(`${vueFile}.shopware-setup.vue`);
         expect(loaded).toHaveProperty('code');
@@ -90,6 +94,29 @@ swDefinePublic({ count });
         expect(loaded.map.sources).not.toContain('sw-my-component.vue');
         expect(loaded.map.sourcesContent).toContain(source);
         expect(loaded.map.mappings).not.toBe('');
+        // The real `.vue` is not a Rollup module of its own, so load() must register it as a watched
+        // dependency for HMR/watch invalidation.
+        expect(loadContext.addWatchFile).toHaveBeenCalledWith(vueFile);
+    });
+
+    it('reuses the resolveId transform in load instead of transforming twice', async () => {
+        /** @type {import('vite').Plugin} */
+        const plugin = ShopwareSetupPlugin(pluginOptions);
+        const source = `<script setup>
+const count = 1;
+swDefinePublic({ count });
+</script>`;
+        const vueFile = await createVueFile(source, 'sw-cached-component.vue');
+        const transformSpy = jest.spyOn(fs, 'readFile');
+
+        const { loaded } = await resolveAndLoadVueFile(plugin, vueFile);
+
+        // resolveId + load together read (and therefore transform) the source exactly once; the second
+        // pass is served from the resolveId cache.
+        expect(loaded).toHaveProperty('code');
+        expect(transformSpy.mock.calls.filter(([file]) => file === vueFile)).toHaveLength(1);
+
+        transformSpy.mockRestore();
     });
 
     it('delegates .override.vue files to the shared override transform', async () => {
@@ -232,6 +259,8 @@ swDefinePublic({ count });
         expect(generatedIndex).toBeGreaterThanOrEqual(0);
         expect(originalIndex).toBeGreaterThanOrEqual(0);
         expect(mappedPosition.source).toContain('src/NestedComponent.vue');
+        // The intermediate virtual module must be collapsed away: its `.shopware-setup.vue` id must not
+        // survive into the shipped map.
         expect(mappedPosition.source).not.toContain('.shopware-setup.vue');
         expect(mappedPosition.line).toBe(originalPosition.line);
         expect(mappedPosition.column).toBe(originalPosition.column);
