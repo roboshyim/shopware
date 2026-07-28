@@ -175,8 +175,6 @@ return [
         // documented extension points. They are marked @internal to reflect their intended visibility and
         // gained store-api/headless awareness. Plugins extend SEO URL routing via the still-public
         // SeoUrlRouteInterface (which keeps its full method set), so none of these are a real break.
-        preg_quote('CHANGED: Shopware\Core\Content\Seo\ConfiguredSeoUrlRoute was marked "@internal"', '/'),
-        preg_quote('CHANGED: The parameter $decorated of Shopware\Core\Content\Seo\ConfiguredSeoUrlRoute#__construct() changed from Shopware\Core\Content\Seo\SeoUrlRoute\SeoUrlRouteInterface to Shopware\Core\Content\Seo\SeoUrlRoute\EntitySeoUrlRouteInterface', '/'),
         preg_quote('ADDED: Method prepareCriteria() was added to interface Shopware\Core\Content\Seo\SeoUrlRoute\EntitySeoUrlRouteInterface', '/'),
         preg_quote('CHANGED: Shopware\Core\Content\Seo\SeoUrlRoute\EntitySeoUrlRouteInterface was marked "@internal"', '/'),
         preg_quote('CHANGED: Shopware\Core\Content\Seo\SeoUrlRoute\EntityRouteResolver was marked "@internal"', '/'),
