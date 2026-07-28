@@ -72,6 +72,14 @@ Cron-driven product export generation no longer derives the next run from `gener
 
 ## Storefront
 
+### Savings percentage is based on the regulation price
+
+When a product has a regulation price (the lowest price of the last 30 days), the storefront now calculates the savings percentage against it instead of the list price / RRP, and no longer renders the crossed-out list price. This complies with Art. 6a of Directive 98/6/EC (CJEU C-330/23). Without a regulation price, the display is unchanged.
+
+`Shopware\Core\Checkout\Cart\Price\Struct\RegulationPrice` now carries `discount` and `percentage` next to `price`, computed by the new `RegulationPrice::createFromUnitPrice()` factory and available as `calculatedPrice.regulationPrice.percentage`. The constructor still works but is deprecated for `v6.8.0`, where it becomes private — use the factory instead.
+
+If you override `buy-widget-price`, `block-price`, `price-unit` or `badges`: the regulation-price section now renders `list-price-percentage`, and `isListPrice` is `false` while a regulation price is present.
+
 ## App System
 
 ## Hosting & Configuration
