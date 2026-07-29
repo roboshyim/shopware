@@ -40,7 +40,7 @@ The transform runs before Vue compiles the SFC.
 
 **Base.** The author body stays exactly as written — plain `<script setup>`, macros in place, nothing hoisted or wrapped. The transform only (1) renames each top-level runtime binding to a reserved `__swSetupAuthor_<name>` alias and (2) appends a generated `Shopware.Component.attachOverrides({ public, private })` footer that re-declares the original names from the override wrapper. Templates read overrideable state exactly as before.
 
-Base mode is **auto-private**: every supported top-level runtime binding becomes private state unless it is listed in `swDefinePublic({...})`. Private state is still normal component/template state — it is only hidden from the top-level public override API. Overrides reach it through the `_private` group of the previous-state payload (`override(({ publicName, _private }) => ...)`). Macro-derived bindings are treated the same way: `const props = defineProps(...)`, `const emit = defineEmits(...)`, and `const slots = defineSlots(...)` become private state under their declared names, so templates can reference `emit`, `slots`, and `props.<name>` directly.
+Base mode is **auto-private**: every supported top-level runtime binding becomes private state unless it is listed in `swDefinePublic({...})`, which every base component must declare (see [Setup markers](#setup-markers)). Private state is still normal component/template state — it is only hidden from the top-level public override API. Overrides reach it through the `_private` group of the previous-state payload (`override(({ publicName, _private }) => ...)`). Macro-derived bindings are treated the same way: `const props = defineProps(...)`, `const emit = defineEmits(...)`, and `const slots = defineSlots(...)` become private state under their declared names, so templates can reference `emit`, `slots`, and `props.<name>` directly.
 
 The base transform also adds `:data="$dataScope"` to every `<sw-block name="...">`, forwarding the generated data scope to block overrides without every base author writing it by hand. The `data` binding and the default slot scope of `<sw-block>` are owned by the transform: authoring `data`, `#default`, or a `v-bind` object on `<sw-block>` is rejected.
 
@@ -84,7 +84,9 @@ swDefineOverride({});
 swDefineOverride({ count });
 ```
 
-Renaming, string keys, computed keys, spreads, and non-object-literal arguments are rejected: the transform, lint, and type layers need a stable compile-time key, and a renamed key could silently shadow another binding. `swDefinePublic` is optional (base is auto-private); `swDefineOverride` is required in override mode — use `swDefineOverride({})` for a template-only override.
+Renaming, string keys, computed keys, spreads, and non-object-literal arguments are rejected: the transform, lint, and type layers need a stable compile-time key, and a renamed key could silently shadow another binding.
+
+**Both markers are mandatory in their mode** — pass an empty object when there is nothing to declare (`swDefinePublic({})` for a base component with no public state, `swDefineOverride({})` for a template-only override). A transformed base component is an extension point: its filename becomes the public override target and its bindings become overrideable state. Requiring the marker keeps that from happening merely because a file carries a `<script setup>` block, and it tells a reader at a glance that the file is lowered rather than being a plain Vue SFC.
 
 ## Differences from native setup
 
@@ -105,7 +107,8 @@ The transform rejects these at build time:
 - Base-mode macros used in override mode (`defineProps`, `withDefaults`, `defineEmits`, `defineExpose`, `defineSlots`, `defineOptions`)
 - Override-only helpers (`useSwPreviousState()`, `useSwProps()`, `useSwContext()`) in base mode
 - Top-level `await`
-- Non-top-level, duplicate, spread, renamed/string/computed-key, or non-object-literal `swDefinePublic()` / `swDefineOverride()` usage — and a missing `swDefineOverride()` in override mode
+- Non-top-level, duplicate, spread, renamed/string/computed-key, or non-object-literal `swDefinePublic()` / `swDefineOverride()` usage
+- A missing marker: no `swDefinePublic()` in a base component, or no `swDefineOverride()` in an override
 - Authored `#default`, `data`, or `v-bind` bindings on `<sw-block>`
 - Template writes to a forwarded override binding inside `<sw-block extends>` content
 - Reserved top-level binding names:
