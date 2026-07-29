@@ -140,6 +140,7 @@ swDefineOverride({});
         const plugin = ShopwareSetupPlugin(pluginOptions);
         const source = `<script setup>
 const count = 1;
+swDefinePublic({ count });
 </script>`;
 
         const result = await plugin.transform(source, '/example/component.vue');
