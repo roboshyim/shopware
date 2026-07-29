@@ -156,7 +156,7 @@ class MailService extends AbstractMailService
      */
     private function createMail(array &$data, array $templateData, Context $context): ?Email
     {
-        $testMode = $this->systemConfigService->getBool(SetupStagingEvent::CONFIG_FLAG) || !empty($data['testMode']);
+        $testMode = $this->systemConfigService->getBool(SetupStagingEvent::CONFIG_FLAG) || ($data['testMode'] ?? false);
 
         $salesChannel = $this->getSalesChannel($data, $templateData, $context);
 
@@ -181,7 +181,9 @@ class MailService extends AbstractMailService
 
         if ($testMode) {
             $this->templateRenderer->enableTestMode();
-            if (\is_array($templateData['order'] ?? []) && empty($templateData['order']['deepLinkCode'])) {
+            if (\is_array($templateData['order'] ?? [])
+                && (!isset($templateData['order']['deepLinkCode']) || !\is_string($templateData['order']['deepLinkCode']) || $templateData['order']['deepLinkCode'] === '')
+            ) {
                 $templateData['order']['deepLinkCode'] = 'home';
             }
         }
@@ -255,8 +257,9 @@ class MailService extends AbstractMailService
             $headers = $mail->getHeaders();
             $headers->addTextHeader('X-Shopware-Language-Id', $context->getLanguageId());
 
-            if (!empty($templateData['eventName'])) {
-                $headers->addTextHeader('X-Shopware-Event-Name', $templateData['eventName']);
+            $eventName = $templateData['eventName'] ?? '';
+            if (\is_string($eventName) && $eventName !== '') {
+                $headers->addTextHeader('X-Shopware-Event-Name', $eventName);
             }
             if ($salesChannel instanceof SalesChannelEntity) {
                 $headers->addTextHeader('X-Shopware-Sales-Channel-Id', $salesChannel->getId());
@@ -337,7 +340,8 @@ class MailService extends AbstractMailService
      */
     private function getMediaUrls(array $data, Context $context): array
     {
-        if (empty($data['mediaIds'])) {
+        $mediaIds = $data['mediaIds'] ?? [];
+        if ($mediaIds === []) {
             return [];
         }
         $criteria = new Criteria($data['mediaIds']);

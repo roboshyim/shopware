@@ -11,6 +11,7 @@ use Shopware\Core\Framework\Api\Util\AccessKeyHelper;
 use Shopware\Core\Framework\DataAbstractionLayer\Util\StatementHelper;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\Installer\InstallerException;
 use Shopware\Core\Maintenance\System\Service\ShopConfigurator;
 
 /**
@@ -55,8 +56,12 @@ class ShopConfigurationService
      */
     private function performUpdate(array $shop, Connection $connection): void
     {
-        if (empty($shop['locale']) || empty($shop['host'])) {
-            throw new \RuntimeException('Please fill in all required fields. (shop configuration)');
+        if (!isset($shop['locale']) || !\is_string($shop['locale']) || $shop['locale'] === '') {
+            throw InstallerException::shopConfigurationRequiredValueMissing('locale');
+        }
+
+        if (!isset($shop['host']) || !\is_string($shop['host']) || $shop['host'] === '') {
+            throw InstallerException::shopConfigurationRequiredValueMissing('host');
         }
 
         $shopConfigurator = new ShopConfigurator($connection, $this->eventDispatcher, $this->clock);
@@ -202,14 +207,12 @@ SQL;
 
     private function getFirstActiveShippingMethodId(Connection $connection): string
     {
-        return $connection
-            ->fetchOne('SELECT id FROM shipping_method WHERE `active` = 1 ORDER BY position');
+        return $connection->fetchOne('SELECT id FROM shipping_method WHERE `active` = 1 ORDER BY position');
     }
 
     private function getFirstActivePaymentMethodId(Connection $connection): string
     {
-        return $connection
-            ->fetchOne('SELECT id FROM payment_method WHERE `active` = 1 ORDER BY position');
+        return $connection->fetchOne('SELECT id FROM payment_method WHERE `active` = 1 ORDER BY position');
     }
 
     private function getLanguageId(string $iso, Connection $connection): ?string
@@ -230,11 +233,11 @@ SQL;
             [$currencyName]
         );
 
-        if (!$fetchCurrencyId) {
-            throw new \RuntimeException('Currency with iso-code ' . $currencyName . ' not found');
+        if (!\is_string($fetchCurrencyId) || $fetchCurrencyId === '') {
+            throw InstallerException::currencyNotFound($currencyName);
         }
 
-        return (string) $fetchCurrencyId;
+        return $fetchCurrencyId;
     }
 
     private function getSnippetSet(string $iso, Connection $connection): ?string
@@ -249,8 +252,8 @@ SQL;
     {
         $fetchCountryId = $connection->fetchOne('SELECT id FROM country WHERE LOWER(iso3) = LOWER(?)', [$iso]);
 
-        if (!$fetchCountryId) {
-            throw new \RuntimeException('Country with iso-code ' . $iso . ' not found');
+        if (!\is_string($fetchCountryId) || $fetchCountryId === '') {
+            throw InstallerException::countryNotFound($iso);
         }
 
         return $fetchCountryId;

@@ -2,6 +2,7 @@
 
 namespace Shopware\Core\Framework\Api\ApiDefinition;
 
+use Shopware\Core\Framework\Api\ApiException;
 use Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use Shopware\Core\Framework\Log\Package;
@@ -73,9 +74,6 @@ class DefinitionService
         return $apiType;
     }
 
-    /**
-     * @throws ApiDefinitionGeneratorNotFoundException
-     */
     private function getGenerator(string $format, string $type): ApiDefinitionGeneratorInterface
     {
         foreach ($this->generators as $generator) {
@@ -84,12 +82,10 @@ class DefinitionService
             }
         }
 
-        throw new ApiDefinitionGeneratorNotFoundException($format);
+        throw ApiException::apiDefinitionGeneratorNotFound($format);
     }
 
     /**
-     * @throws ApiDefinitionGeneratorNotFoundException
-     *
      * @return array<string, EntityDefinition>|array<string, EntityDefinition&SalesChannelDefinitionInterface>
      */
     private function getDefinitions(string $type): array
@@ -102,6 +98,6 @@ class DefinitionService
             return $this->salesChannelDefinitionRegistry->getDefinitions();
         }
 
-        throw new ApiDefinitionGeneratorNotFoundException($type);
+        throw ApiException::apiDefinitionGeneratorNotFound($type);
     }
 }
