@@ -90,6 +90,9 @@ export default defineConfig({
             name: 'Platform',
             use: {
                 ...devices['Desktop Chrome'],
+                // The admin menu turns into an off-canvas panel at viewports of
+                // 1280px and below — the device default (1280x720) would hide it.
+                viewport: { width: 1920, height: 1080 },
                 launchOptions: {
                     args: ['--remote-debugging-port=9222'],
                 },
@@ -109,6 +112,9 @@ export default defineConfig({
             name: 'Update',
             use: {
                 ...devices['Desktop Chrome'],
+                // The admin menu turns into an off-canvas panel at viewports of
+                // 1280px and below — the device default (1280x720) would hide it.
+                viewport: { width: 1920, height: 1080 },
             },
             dependencies: [],
             grep: /@Update/,
