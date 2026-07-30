@@ -115,6 +115,27 @@ Cron-driven product export generation no longer derives the next run from `gener
 
 ## Administration
 
+### New media Quick info extension point and selected-item dataset
+
+The media "Quick info" sidebar now exposes an extension point so apps and plugins
+can render their own content next to a selected media file. A new
+`sw-extension-component-section` with the position identifier
+`sw-media-quickinfo-metadata` is rendered directly below the metadata list, and
+the currently selected media entity is published as the `sw-media-quickinfo__item`
+dataset (`Shopware.ExtensionAPI.publishData`).
+
+Extensions can register a component at the `sw-media-quickinfo-metadata` position
+and read the selected item through the data API. App (iframe) extensions must
+request the fields they need via `selectors`, for example:
+
+```js
+const { data: media } = useDataset('sw-media-quickinfo__item', {
+    selectors: ['id', 'fileName', 'fileExtension', 'mimeType'],
+});
+```
+
+The dataset updates reactively as the user selects a different media file.
+
 ## Storefront
 
 ### `theme:create` gains `--full` and granular scaffold flags
