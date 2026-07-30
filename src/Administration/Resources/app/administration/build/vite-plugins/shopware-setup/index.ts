@@ -64,6 +64,8 @@ export default function ShopwareSetupPlugin(options: Options): Plugin {
     // deletes on read, and a watch-triggered reload that skips resolveId simply falls back to a fresh
     // transform - so the cache can never serve stale output.
     const resolvedTransforms = new Map<string, ShopwareSetupTransformResult>();
+    // Set from the resolved Vite config; the remap is pointless when the build emits no maps.
+    let sourcemapsEnabled = true;
 
     async function transformFile(fileName: string): Promise<ShopwareSetupTransformResult | null> {
         const transformShopwareSetupSfc = await loadShopwareSetupTransform(options.administrationRoot);
@@ -211,7 +213,18 @@ export default function ShopwareSetupPlugin(options: Options): Plugin {
             }
         },
 
+        configResolved(config) {
+            // Sourcemaps follow the build's own setting, which vite.config.mts and plugins.vite.ts derive
+            // from GENERATE_SOURCEMAPS / SHOPWARE_ADMIN_SKIP_SOURCEMAP_GENERATION. Reading it here keeps
+            // this plugin on par with the rest of the build instead of re-interpreting those variables.
+            sourcemapsEnabled = Boolean(config.build?.sourcemap);
+        },
+
         generateBundle(outputOptions, bundle) {
+            if (!sourcemapsEnabled) {
+                return;
+            }
+
             virtualSourcemap.remapBundle(outputOptions, bundle);
         },
     };
